@@ -13,6 +13,7 @@
 .gradle/
 build/
 local.properties
+.kotlin/
 
 # IDE
 .idea/
