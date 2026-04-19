@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -46,12 +47,16 @@ fun GalleryScreen() {
     var photos by remember { mutableStateOf<List<Photo>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var retryKey by remember { mutableStateOf(0) }
+
+    val context = LocalContext.current
 
     suspend fun loadPhotos() {
         isLoading = true
         errorMessage = null
         try {
             val provider = PhotoProvider()
+            provider.initialize(context)
             photos = provider.loadPhotos(100, 0)
         } catch (e: Exception) {
             errorMessage = e.message ?: "Failed to load photos"
@@ -60,7 +65,7 @@ fun GalleryScreen() {
         }
     }
 
-    LaunchedEffect(Unit) { loadPhotos() }
+    LaunchedEffect(retryKey) { loadPhotos() }
 
     androidx.compose.material3.Scaffold(
         topBar = {
@@ -68,7 +73,7 @@ fun GalleryScreen() {
                 title = { Text("Photos") },
                 actions = {
                     if (errorMessage != null) {
-                        IconButton(onClick = { }) {
+                        IconButton(onClick = { retryKey++ }) {
                             Icon(Icons.Default.Refresh, contentDescription = "Retry")
                         }
                     }

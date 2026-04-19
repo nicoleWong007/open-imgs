@@ -6,6 +6,7 @@ import android.content.Context
 import android.database.ContentObserver
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.provider.MediaStore
 import com.openimgs.shared.domain.model.Photo
 import kotlinx.coroutines.Dispatchers
@@ -77,14 +78,20 @@ actual class PhotoProvider actual constructor() {
                 MediaStore.Images.Media.DATA
             )
 
-            val sortOrder = "${MediaStore.Images.Media.DATE_TAKEN} DESC LIMIT $limit OFFSET $offset"
+            val sortOrder = "${MediaStore.Images.Media.DATE_TAKEN} DESC"
+
+            val queryBundle = Bundle().apply {
+                putString(ContentResolver.QUERY_ARG_SQL_SORT_ORDER, sortOrder)
+                putInt(ContentResolver.QUERY_ARG_LIMIT, limit)
+                putInt(ContentResolver.QUERY_ARG_OFFSET, offset)
+            }
+
             @Suppress("DEPRECATION")
             contentResolver.query(
                 uri,
                 projection,
-                null,
-                null,
-                sortOrder
+                queryBundle,
+                null
             )?.use { cursor ->
                 val idCol = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
                 val nameCol = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
