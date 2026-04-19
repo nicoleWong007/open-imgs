@@ -12,10 +12,19 @@ pluginManagement {
     }
 }
 
-dependencyResolution {
-    @Suppress("UNCHECKED_CAST")
+dependencyResolutionManagement {
+    repositories {
+        google {
+            mavenContent {
+                includeGroupAndSubgroups("androidx")
+                includeGroupAndSubgroups("com.android")
+                includeGroupAndSubgroups("com.google")
+            }
+        }
+        mavenCentral()
+    }
     versionCatalogs {
-        val libs by creating {
+        create("libs") {
             // Kotlin
             version("kotlin", "2.1.20")
             // SQLDelight

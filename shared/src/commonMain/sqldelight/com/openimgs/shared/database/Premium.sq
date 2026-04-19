@@ -1,0 +1,25 @@
+CREATE TABLE premium_status (
+    id INTEGER NOT NULL PRIMARY KEY DEFAULT 1,
+    is_premium INTEGER NOT NULL DEFAULT 0,
+    expiry_date INTEGER,
+    searches_used INTEGER NOT NULL DEFAULT 0,
+    searches_reset_date INTEGER NOT NULL,
+    duplicate_deletes_used INTEGER NOT NULL DEFAULT 0,
+    deletes_reset_date INTEGER NOT NULL
+);
+
+getStatus:
+SELECT * FROM premium_status WHERE id = 1;
+
+upsertStatus:
+INSERT OR REPLACE INTO premium_status(id, is_premium, expiry_date, searches_used, searches_reset_date, duplicate_deletes_used, deletes_reset_date)
+VALUES (1, ?, ?, ?, ?, ?, ?);
+
+incrementSearches:
+UPDATE premium_status SET searches_used = searches_used + 1 WHERE id = 1;
+
+incrementDeletes:
+UPDATE premium_status SET duplicate_deletes_used = duplicate_deletes_used + 1 WHERE id = 1;
+
+resetMonthlyUsage:
+UPDATE premium_status SET searches_used = 0, searches_reset_date = ?, duplicate_deletes_used = 0, deletes_reset_date = ? WHERE id = 1;

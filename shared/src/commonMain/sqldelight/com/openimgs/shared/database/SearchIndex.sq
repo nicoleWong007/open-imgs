@@ -1,0 +1,17 @@
+-- Search queries against the photos table
+-- Embeddings stored as BLOB in photos.embedding
+
+searchByText:
+SELECT * FROM photos
+WHERE path LIKE '%' || ? || '%'
+ORDER BY date_taken DESC
+LIMIT ?;
+
+markIndexed:
+UPDATE photos SET is_indexed = 1 WHERE id = ?;
+
+indexedCount:
+SELECT COUNT(*) FROM photos WHERE is_indexed = 1 AND embedding IS NOT NULL;
+
+notIndexedCount:
+SELECT COUNT(*) FROM photos WHERE is_indexed = 0 OR embedding IS NULL;

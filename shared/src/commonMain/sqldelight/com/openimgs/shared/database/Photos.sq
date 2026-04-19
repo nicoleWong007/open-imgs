@@ -1,0 +1,55 @@
+CREATE TABLE photos (
+    id TEXT NOT NULL PRIMARY KEY,
+    path TEXT NOT NULL,
+    date_taken INTEGER NOT NULL,
+    size INTEGER NOT NULL,
+    mime_type TEXT NOT NULL,
+    width INTEGER NOT NULL,
+    height INTEGER NOT NULL,
+    orientation INTEGER NOT NULL DEFAULT 1,
+    is_favorite INTEGER NOT NULL DEFAULT 0,
+    phash TEXT,
+    dhash TEXT,
+    embedding BLOB,
+    is_indexed INTEGER NOT NULL DEFAULT 0
+);
+
+selectAll:
+SELECT * FROM photos ORDER BY date_taken DESC;
+
+selectById:
+SELECT * FROM photos WHERE id = ?;
+
+selectByDateRange:
+SELECT * FROM photos WHERE date_taken >= ? AND date_taken <= ? ORDER BY date_taken DESC;
+
+selectPaginated:
+SELECT * FROM photos ORDER BY date_taken DESC LIMIT ? OFFSET ?;
+
+selectFavorites:
+SELECT * FROM photos WHERE is_favorite = 1 ORDER BY date_taken DESC;
+
+selectUnindexed:
+SELECT id, path FROM photos WHERE is_indexed = 0 LIMIT ?;
+
+insert:
+INSERT OR REPLACE INTO photos(id, path, date_taken, size, mime_type, width, height, orientation, is_favorite)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+updateHashes:
+UPDATE photos SET phash = ?, dhash = ?, is_indexed = 1 WHERE id = ?;
+
+updateEmbedding:
+UPDATE photos SET embedding = ? WHERE id = ?;
+
+updateFavorite:
+UPDATE photos SET is_favorite = ? WHERE id = ?;
+
+deleteById:
+DELETE FROM photos WHERE id = ?;
+
+count:
+SELECT COUNT(*) FROM photos;
+
+totalSize:
+SELECT SUM(size) FROM photos;

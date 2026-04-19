@@ -1,0 +1,42 @@
+CREATE TABLE duplicate_groups (
+    id TEXT NOT NULL PRIMARY KEY,
+    original_id TEXT NOT NULL,
+    similarity REAL NOT NULL,
+    status TEXT NOT NULL DEFAULT 'PENDING',
+    created_at INTEGER NOT NULL,
+    reviewed_at INTEGER
+);
+
+CREATE TABLE duplicate_photos (
+    group_id TEXT NOT NULL,
+    photo_id TEXT NOT NULL,
+    FOREIGN KEY (group_id) REFERENCES duplicate_groups(id) ON DELETE CASCADE,
+    FOREIGN KEY (photo_id) REFERENCES photos(id) ON DELETE CASCADE
+);
+
+selectAll:
+SELECT * FROM duplicate_groups ORDER BY created_at DESC;
+
+selectByStatus:
+SELECT * FROM duplicate_groups WHERE status = ?;
+
+selectPhotosByGroup:
+SELECT p.* FROM photos p
+INNER JOIN duplicate_photos dp ON p.id = dp.photo_id
+WHERE dp.group_id = ?;
+
+insertGroup:
+INSERT OR REPLACE INTO duplicate_groups(id, original_id, similarity, status, created_at)
+VALUES (?, ?, ?, ?, ?);
+
+addDuplicatePhoto:
+INSERT OR IGNORE INTO duplicate_photos(group_id, photo_id) VALUES (?, ?);
+
+updateStatus:
+UPDATE duplicate_groups SET status = ?, reviewed_at = ? WHERE id = ?;
+
+deleteGroup:
+DELETE FROM duplicate_groups WHERE id = ?;
+
+pendingCount:
+SELECT COUNT(*) FROM duplicate_groups WHERE status = 'PENDING';

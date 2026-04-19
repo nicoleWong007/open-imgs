@@ -1,0 +1,56 @@
+CREATE TABLE albums (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    cover_photo_id TEXT,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+);
+
+CREATE TABLE album_photos (
+    album_id TEXT NOT NULL,
+    photo_id TEXT NOT NULL,
+    added_at INTEGER NOT NULL,
+    PRIMARY KEY (album_id, photo_id),
+    FOREIGN KEY (album_id) REFERENCES albums(id) ON DELETE CASCADE,
+    FOREIGN KEY (photo_id) REFERENCES photos(id) ON DELETE CASCADE
+);
+
+selectAll:
+SELECT * FROM albums ORDER BY updated_at DESC;
+
+selectById:
+SELECT * FROM albums WHERE id = ?;
+
+selectPhotosByAlbum:
+SELECT p.* FROM photos p
+INNER JOIN album_photos ap ON p.id = ap.photo_id
+WHERE ap.album_id = ?
+ORDER BY ap.added_at DESC;
+
+photoCount:
+SELECT COUNT(*) FROM album_photos WHERE album_id = ?;
+
+insert:
+INSERT OR REPLACE INTO albums(id, name, cover_photo_id, created_at, updated_at)
+VALUES (?, ?, ?, ?, ?);
+
+updateName:
+UPDATE albums SET name = ?, updated_at = ? WHERE id = ?;
+
+updateCover:
+UPDATE albums SET cover_photo_id = ?, updated_at = ? WHERE id = ?;
+
+deleteById:
+DELETE FROM albums WHERE id = ?;
+
+addPhoto:
+INSERT OR IGNORE INTO album_photos(album_id, photo_id, added_at) VALUES (?, ?, ?);
+
+removePhoto:
+DELETE FROM album_photos WHERE album_id = ? AND photo_id = ?;
+
+albumCount:
+SELECT COUNT(*) FROM albums;
+
+isPhotoInAlbum:
+SELECT COUNT(*) FROM album_photos WHERE album_id = ? AND photo_id = ?;

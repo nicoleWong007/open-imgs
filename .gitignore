@@ -1,0 +1,42 @@
+# Built application files
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# Kotlin / Java
+*.class
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+
+# Gradle
+.gradle/
+build/
+local.properties
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.DS_Store
+
+# Signing (NEVER commit these)
+keystore.properties
+*.jks
+*.keystore
+
+# iOS
+iosApp/Pods/
+iosApp/*.xcworkspace
+iosApp/DerivedData/
+iosApp/build/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+xcuserdata/
+
+# Secrets
+*.env
+credentials.json
